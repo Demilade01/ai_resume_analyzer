@@ -334,24 +334,53 @@ export const usePuterStore = create<PuterStore>((set, get) => {
       return;
     }
 
-    return puter.ai.chat(
-      [
-        {
-          role: "user",
-          content: [
+    try {
+      // Try with the preferred model first
+      return await puter.ai.chat(
+        [
+          {
+            role: "user",
+            content: [
+              {
+                type: "file",
+                puter_path: path,
+              },
+              {
+                type: "text",
+                text: message,
+              },
+            ],
+          },
+        ],
+        { model: "claude-sonnet-4" }
+      ) as Promise<AIResponse | undefined>;
+    } catch (error) {
+      console.warn("Primary model failed, trying fallback:", error);
+      
+      try {
+        // Fallback to default model
+        return await puter.ai.chat(
+          [
             {
-              type: "file",
-              puter_path: path,
+              role: "user",
+              content: [
+                {
+                  type: "file",
+                  puter_path: path,
+                },
+                {
+                  type: "text",
+                  text: message,
+                },
+              ],
             },
-            {
-              type: "text",
-              text: message,
-            },
-          ],
-        },
-      ],
-      { model: "claude-sonnet-4" }
-    ) as Promise<AIResponse | undefined>;
+          ]
+        ) as Promise<AIResponse | undefined>;
+      } catch (fallbackError) {
+        console.error("Both primary and fallback models failed:", fallbackError);
+        throw new Error("AI service unavailable - no models available");
+      }
+    }
   };
 
   const img2txt = async (image: string | File | Blob, testMode?: boolean) => {
