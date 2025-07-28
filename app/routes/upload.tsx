@@ -1,11 +1,36 @@
 import React, { useState } from 'react'
+import FileUploader from '~/components/FileUploader';
 import Navbar from '~/components/Navbar'
 
 const upload = () => {
-  const [isProcessing, setIsProcessing] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [statusText, setStatusText] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [companyName, setCompanyName] = useState("");
+  const [jobTitle, setJobTitle] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {}
+  const handleFileSelect = (file: File | null) => {
+    setFile(file);
+  }
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget.closest('form');
+    if(!form) return;
+    const formData = new FormData(form);
+
+    const companyName = formData.get('company-name') as string;
+    const jobTitle = formData.get('job-title') as string;
+    const jobDescription = formData.get('job-description') as string;
+
+    console.log('Form Data:', {
+      companyName,
+      jobTitle,
+      jobDescription,
+      file: file ? file.name : null
+    });
+  }
 
 
   return (
@@ -23,23 +48,44 @@ const upload = () => {
             <h2>Drop your resume for an ATS score and improvement tips</h2>
           )}
 
-          {isProcessing && (
+          {!isProcessing && (
             <form id='upload-form' onSubmit={handleSubmit} className='flex flex-col gap-4 mt-8'>
               <div className='form-div'>
                 <label htmlFor="company-name">Company Name</label>
-                <input type="text" id="company-name" placeholder='Company Name' />
+                <input
+                  type="text"
+                  id="company-name"
+                  name="company-name"
+                  placeholder='Company Name'
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                />
               </div>
               <div className='form-div'>
                 <label htmlFor="job-title">Job Title</label>
-                <input type="text" id="job-title" placeholder='Job Title' />
+                <input
+                  type="text"
+                  id="job-title"
+                  name="job-title"
+                  placeholder='Job Title'
+                  value={jobTitle}
+                  onChange={(e) => setJobTitle(e.target.value)}
+                />
               </div>
               <div className='form-div'>
                 <label htmlFor="job-description">Job Description</label>
-                <textarea rows={5} id="job-description" placeholder='Job Description' />
+                <textarea
+                  rows={5}
+                  id="job-description"
+                  name="job-description"
+                  placeholder='Job Description'
+                  value={jobDescription}
+                  onChange={(e) => setJobDescription(e.target.value)}
+                />
               </div>
                <div className='form-div'>
-                <label htmlFor="job-description">Job Description</label>
-                <div>Uploader</div>
+                <label htmlFor="resume-upload">Resume Upload</label>
+                <FileUploader onFileSelect={handleFileSelect} />
               </div>
 
               <button className='primary-button' type='submit'>
