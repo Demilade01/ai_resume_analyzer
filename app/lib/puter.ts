@@ -356,7 +356,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
       ) as Promise<AIResponse | undefined>;
     } catch (error) {
       console.warn("Primary model failed, trying fallback:", error);
-      
+
       try {
         // Fallback to default model
         return await puter.ai.chat(
@@ -482,4 +482,4 @@ export const usePuterStore = create<PuterStore>((set, get) => {
     init,
     clearError: () => set({ error: null }),
   };
-}); 
+});
