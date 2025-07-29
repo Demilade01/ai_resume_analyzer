@@ -67,8 +67,8 @@ const upload = () => {
         return;
       }
 
-      const feedbackText = typeof feedback.message.content === 'string' 
-        ? feedback.message.content 
+      const feedbackText = typeof feedback.message.content === 'string'
+        ? feedback.message.content
         : feedback.message.content[0].text;
 
       data.feedback = JSON.parse(feedbackText);
@@ -76,10 +76,10 @@ const upload = () => {
 
       setStatusText("Analysis complete!");
       console.log("Feedback Data:", data);
-      
+
       // Navigate to results page or show results
-      // navigate(`/results/${uuid}`);
-      
+      navigate(`/resume/${uuid}`);
+
     } catch (error) {
       console.error("AI Analysis Error:", error);
       setStatusText("Failed to analyze resume - AI service error. Please try again later.");
