@@ -24,9 +24,9 @@ export default function Home() {
 
     // If user is NOT authenticated, redirect to auth with return URL
     if (!auth.isAuthenticated) {
-      navigate('/auth?next=/');
+      navigate('/auth?next=/', { replace: true });
     }
-  }, [isLoading, auth.isAuthenticated, navigate])
+  }, [isLoading, auth.isAuthenticated, navigate]);
 
   useEffect(() => {
     const loadResumes = async () => {

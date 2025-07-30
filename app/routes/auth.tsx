@@ -9,13 +9,21 @@ export const meta: () => { title: string; description: string }[] = () => [
 const Auth = () => {
   const { auth, isLoading } = usePuterStore();
   const location = useLocation();
-  const next = location.search.split('next=')[1];
+  const searchParams = new URLSearchParams(location.search);
+  const next = searchParams.get('next');
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(!auth.isAuthenticated) navigate(next);
-
-  }, [auth.isAuthenticated, next])
+    // Only redirect after loading is complete and user is authenticated
+    if (!isLoading && auth.isAuthenticated) {
+      // Small delay to ensure state is stable
+      const timer = setTimeout(() => {
+        navigate(next || '/', { replace: true });
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [auth.isAuthenticated, isLoading, next, navigate]);
 
 
   return (
