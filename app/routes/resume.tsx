@@ -17,10 +17,15 @@ const Resume = () => {
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const navigate = useNavigate();
 
-  //   useEffect(() => {
-  //   if(!isLoading && !auth.isAuthenticated) navigate(`/auth?next=/resume/${id}`);
+  useEffect(() => {
+    // Only check auth after loading is complete
+    if (isLoading) return;
 
-  // }, [isLoading])
+    // If user is NOT authenticated, redirect to auth with return URL
+    if (!auth.isAuthenticated) {
+      navigate(`/auth?next=/resume/${id}`);
+    }
+  }, [isLoading, auth.isAuthenticated, navigate, id])
 
   useEffect(() => {
     const loadResume = async () => {
