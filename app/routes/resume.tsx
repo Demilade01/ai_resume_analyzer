@@ -42,9 +42,15 @@ const Resume = () => {
       if(!imageBlob) return;
       const imageUrl = URL.createObjectURL(new Blob([imageBlob], { type: 'image/png' }));
       setImageUrl(imageUrl);
-      setFeedback(data.feedback || '');
 
-      console.log({ resumeUrl, imageUrl, feedback: data.feedback });
+      // Parse feedback if it's a string, otherwise use it directly
+      const feedbackData = typeof data.feedback === 'string'
+        ? JSON.parse(data.feedback)
+        : data.feedback;
+
+      setFeedback(feedbackData || null);
+
+      console.log({ resumeUrl, imageUrl, feedback: feedbackData });
     }
 
     loadResume();
@@ -79,10 +85,10 @@ const Resume = () => {
         </section>
         <section className='feedback-section'>
           <h2 className='text-4xl !text-black font-bold'>Resume Review</h2>
-          {feedback ? (
+          {feedback && typeof feedback === 'object' ? (
             <div className='flex flex-col gap-8 animate-in fade-in duration-1000'>
               <Summary feedback={feedback} />
-              <ATS score={feedback.ATS.score || 0} suggestions={feedback.ATS.tips || []} />
+              <ATS score={feedback.ATS?.score || 0} suggestions={feedback.ATS?.tips || []} />
               <Details feedback={feedback} />
             </div>
           ) : (
