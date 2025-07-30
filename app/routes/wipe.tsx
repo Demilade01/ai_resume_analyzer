@@ -18,9 +18,9 @@ const WipeApp = () => {
 
     useEffect(() => {
         if (!isLoading && !auth.isAuthenticated) {
-            navigate("/auth?next=/wipe");
+            navigate("/auth?next=/wipe", { replace: true });
         }
-    }, [isLoading]);
+    }, [isLoading, auth.isAuthenticated, navigate]);
 
     const handleDelete = async () => {
         files.forEach(async (file) => {
